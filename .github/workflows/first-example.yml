@@ -17,7 +17,7 @@ jobs:
       - name: Executing Shell scipt
         run: 
             chmod +x ascii-script.sh
-            .github/workflows/ascii-script.sh
+            ./.github/workflows/ascii-script.sh
 
     #   - name: Install cowsay
     #     run: sudo apt-get update && sudo apt-get install -y cowsay
