@@ -5,7 +5,10 @@ on: push
 jobs:
     first_job:
         runs-on: ubuntu-latest
-        steps: 
+        steps:
+            - name: checkout repo
+              uses: actions/checkout@v4
+            
             - name: Welcone message
               run: echo "My first Github Actions job"
 
