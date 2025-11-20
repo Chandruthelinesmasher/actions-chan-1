@@ -3,64 +3,50 @@ name: My First Workflow
 on: push
 
 jobs:
-    build_job_1:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Install cowsay program
-            run: sudo apt-get install cowsay -y
-         
-          - name: Execute Cowsay CMD
-            run: cowsay -f dragon "Run for cover, I am a DRAGON...RAMR" >> dragon.txt
+  build_job_1:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-path: ${{ steps.save-artifact.outputs.path }}
+    steps:
+      - name: Install cowsay program
+        run: sudo apt-get update && sudo apt-get install cowsay -y
 
-          - name: sleep for 30 seconds
-            run: sleep 30
+      - name: Execute Cowsay CMD
+        run: cowsay -f dragon "Run for cover, I am a DRAGON...RAWR" > dragon.txt
 
-    test_job_2:
-        runs-on: ubuntu-latest
-        steps:
-         - name: sleep for 10 seconds
-           run: sleep 10
-        
-         - name: Test file Exists
-           run: grep -i "dragon" dragon.txt 
+      - name: Save dragon.txt as artifact
+        id: save-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dragon-artifact
+          path: dragon.txt
 
-    deploy_job_3:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Read File
-          run: cat dragon.txt
+      - name: Sleep for 30 seconds
+        run: sleep 30
 
-        - name: Read file
-          run: cat dragon.txt
-        
+  test_job_2:
+    runs-on: ubuntu-latest
+    needs: build_job_1
+    steps:
+      - name: Download dragon.txt artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dragon-artifact
 
+      - name: Sleep for 10 seconds
+        run: sleep 10
 
+      - name: Test file exists and contains 'dragon'
+        run: grep -i "dragon" dragon.txt
 
+  deploy_job_3:
+    runs-on: ubuntu-latest
+    needs: test_job_2
+    steps:
+      - name: Download dragon.txt artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dragon-artifact
 
-
-
-
-#   first_job:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout repo
-#         uses: actions/checkout@v4
-
-#       - name: List and Read file
-#         run: |
-#           echo "My first Github Actions job"
-#           ls -ltra
-#           cat README.md
-#       - name: Executing Shell scipt
-#         run: 
-#              chmod +x ./.github/workflows/ascii-script.sh
-#             ./.github/workflows/ascii-script.sh
-
-    #   - name: Install cowsay
-    #     run: sudo apt-get update && sudo apt-get install -y cowsay
-
-    #   - name: Generate ASCII Artwork
-    #     run: cowsay -f dragon "Run for cover, I am a Dragon ... RAWR" >> dragon.txt
-       
-    #   - name: Read file
-    #     run: cat dragon.txt
+      - name: Read file contents
+        run: cat dragon.txt
