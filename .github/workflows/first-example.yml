@@ -16,7 +16,7 @@ jobs:
           cat README.md
       - name: Executing Shell scipt
         run: 
-            chmod +x ascii-script.sh
+             chmod +x ./.github/workflows/ascii-script.sh
             ./.github/workflows/ascii-script.sh
 
     #   - name: Install cowsay
